@@ -1,6 +1,7 @@
 # Imports
 import json
 import requests as req
+MediaOffset = 0
 # Checks Username and produces ping URL
 UserCheck = "yourmom"
 while UserCheck != "Yes" and UserCheck != "yes":
@@ -8,9 +9,19 @@ while UserCheck != "Yes" and UserCheck != "yes":
     User = input("Please enter your My Anime List Username :   ")
     print(User + "?")
     UserCheck = input("Is this correct? Type 'Yes' or 'No'")
+    # Validates the User
+    URL = "https://api.myanimelist.net/v2/users/"+User+"/animelist?offset="+str(MediaOffset)+"&fields=mean%2Cnum_episodes%2Caverage_episode_duration%2Crating&status=completed"
+    # Gets raw account data and stores in variuble
+    hed={'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjRmOTQ2MjZhMmZjNTI0NTNmN2M3YzlmODE0NmRmMTg1ODg1N2E5ZmRhYjk1NWRmYmQ0ZDVhYmRkNGQyZmU2N2FmYTM0NzM2YjhmODgyODI2In0.eyJhdWQiOiJlNDVmNTZlNTVlY2NiNjU4ZmIwNTRmZjJlNTJmMWFmOCIsImp0aSI6IjRmOTQ2MjZhMmZjNTI0NTNmN2M3YzlmODE0NmRmMTg1ODg1N2E5ZmRhYjk1NWRmYmQ0ZDVhYmRkNGQyZmU2N2FmYTM0NzM2YjhmODgyODI2IiwiaWF0IjoxNjE1MDQ4NjQzLCJuYmYiOjE2MTUwNDg2NDMsImV4cCI6MTYxNzcyMzQ0Miwic3ViIjoiMTIwMjAwNTAiLCJzY29wZXMiOltdfQ.TYAbqNHy8x4b_bp_h5zf19DQ9ulxlOhRilkSmLiWSh8H7lLY-HHIHWBo7RJIC79We6_kyjyIRxcfS-_xcCNOxtxUZTuv2C80Oplihw0Jmovl6gSertBot9zAKe9fSmq7_cVESOTQ3x6Hh2uQRcsAqjZLdWsB8LGS-x4vAkmYEjmZBSCsZDPvOBicq-MnP9AnVAQECEbnz_YqqkQGGX708wJcMYPK1MYmSV38Ype83wyGfxNGQ2iUryXx6_RAQ8wlaEo_4tIPJiWyQxRl7GgzSElvSf9DxzMvTinvKjIALRZk5yf3LKDeFBQ3Oxyrd4ImDOVrhf69qwegRQDyufEtXQ'}
+    RawUserCheck = req.get(URL,headers = hed)
+    ParsedUserCheck = json.loads(RawUserCheck.text)
+    if ParsedUserCheck == {'message': '', 'error': 'not_found'}:
+        print("ERROR: USERNAME DOES NOT EXIST, PLEASE TRY AGAIN")
+        UserCheck = "no"
+
 
 # Sets variuble as 0, since we haven't read any anime yet, the index starts at 0 + sets main data list
-MediaOffset = 0
+
 BigData = []
 while True:
     URL = "https://api.myanimelist.net/v2/users/"+User+"/animelist?offset="+str(MediaOffset)+"&fields=mean%2Cnum_episodes%2Caverage_episode_duration%2Crating&status=completed"
@@ -65,7 +76,6 @@ LongestAnimeLengthHours = max(AnimeLengthList) / 60 / 60
 AnimeLengthIndexCommandNumber = max(AnimeLengthList)
 AnimeLengthFetchIndex = AnimeLengthList.index(AnimeLengthIndexCommandNumber)
 LongestAnimeTitle = BigData[AnimeLengthFetchIndex]["node"]["title"]
-print(LongestAnimeLengthHours)
 # For stats calculated, we have 1. average score 2. total time spent watching anime 3. total episodes watched
 # FLAG: change the initial if statements, they are just there to make sure that it's collapsible
 print("The average score of all the anime you've watched is:   "+str(AverageScore)+"!")
@@ -84,7 +94,7 @@ if AverageScore > -1:
         print("I don't know how you even make it this low, this is a joke account right... For dear god I hope so. Please... just delete your account at this point - There is no return from this")
     elif AverageScore >= 4:
         print("Ouch, I didn't think (and hoped) that this part of the code would ever be used. I don't even understand, either you have a supreme taste for trash anime... or this is your NSFW accuont used for keeping track of Hentai you peice of human filth. ")
-print("The total time you've spent watching anime is:   "+str(TotalTime)+"Hrs")
+print("The total time you've spent watching anime is:   "+str(TotalTime)+"Hrs!")
 # First, find average numbers to base this around.
 # if TotalTime > -1:
 #     if TotalTime > Ultra High
@@ -101,18 +111,5 @@ print("The total number of episodes you've watched is:   "+str(TotalEpisodesWatc
 #     elif TotalTime > low
 #     elif TotalTime > ultra low
 print("The longest anime you've watched is:   "+str(LongestAnimeTitle)+", with a total of "+str(LongestAnimeLengthHours)+"hrs. Jesus, thats a LOT of filler!")
+StallKill = input("Type anything when ready to close the program?")
 
-
-
-
-# print("Mean Scores:   ")
-# print(MeanList)
-# print("Episode Duration:   ")
-# print(DurationList)
-# print("Number of Episodes:   ")
-# print(EpisodesList)
-
-
-
-
-# Mean = ParsedData["data"][0]["node"]["mean"]
